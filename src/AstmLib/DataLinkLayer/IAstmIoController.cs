@@ -2,7 +2,7 @@ using System;
 
 namespace AstmLib.DataLinkLayer
 {
-    public interface IAstmIoController
+    public interface IAstmIOController
     {
 
         bool IsRunning { get; }

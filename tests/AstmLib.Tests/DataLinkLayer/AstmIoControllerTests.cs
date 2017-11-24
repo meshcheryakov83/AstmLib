@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AstmLib.Tests.DataLinkLayer
 {
-    public class AstmIoControllerTests
+    public class AstmIOControllerTests
     {
         [Fact]
         public void Test1()
@@ -36,7 +36,7 @@ namespace AstmLib.Tests.DataLinkLayer
                 var stream = new InMemotyChannel(buf1, buf2);
                 var lowLevelSettings = new AstmLowLevelSettings();
 
-                var controller = new AstmIoController(stream, lowLevelSettings, loggingFactory);
+                var controller = new AstmIOController(stream, lowLevelSettings, loggingFactory);
 
                 controller.Start();
                 controller.AddMessageToUploadQueue(message);
@@ -57,7 +57,7 @@ namespace AstmLib.Tests.DataLinkLayer
                 var stream = new InMemotyChannel(buf2, buf1);
                 var lowLevelSettings = new AstmLowLevelSettings();
 
-                var controller = new AstmIoController(stream, lowLevelSettings, loggingFactory);
+                var controller = new AstmIOController(stream, lowLevelSettings, loggingFactory);
 
                 controller.Start();
                 controller.MessageDownloadCompleted += (sender, args) =>

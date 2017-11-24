@@ -8,14 +8,14 @@ using Microsoft.Extensions.Logging;
 
 namespace AstmLib.DataLinkLayer
 {
-    public class AstmIoController : IAstmIoController
+    public class AstmIOController : IAstmIOController
     {
         enum DataLinkStates { Upload, Download, Neutral }
         public const string DISABLE_UPLOAD_TIMER_NAME = "DisableUpload";
 
         #region Fields
 
-	    private readonly ILogger<AstmIoController> _log;
+	    private readonly ILogger<AstmIOController> _log;
 		private readonly Queue<string> _uploadQueue = new Queue<string>();
         private readonly IUploader _uploader;
         private readonly IDownloader _downloader;
@@ -36,7 +36,7 @@ namespace AstmLib.DataLinkLayer
 
         #region Constructors & Destructors
         
-	    public AstmIoController(
+	    public AstmIOController(
 	        IAstmChannel stream,
 	        AstmLowLevelSettings lowLevelSettings,
 	        ILoggerFactory factory) : this(
@@ -45,17 +45,17 @@ namespace AstmLib.DataLinkLayer
                 new Uploader(stream, lowLevelSettings, new TimersManager(), factory.CreateLogger<Uploader>()),
                 new Downloader(stream, lowLevelSettings, new TimersManager(), factory.CreateLogger<Downloader>()),
                 new TimersManager(),
-                factory.CreateLogger<AstmIoController>())
+                factory.CreateLogger<AstmIOController>())
 	    {
 	    }
 
-	    protected AstmIoController(
+	    protected AstmIOController(
             IAstmChannel stream,
             AstmLowLevelSettings lowLevelSettings,
             IUploader uploader,
             IDownloader downloader,
             ITimersManager timersManager,
-            ILogger<AstmIoController> log)
+            ILogger<AstmIOController> log)
 	    {
 	        _stream = stream;
 		    _uploader = uploader;
