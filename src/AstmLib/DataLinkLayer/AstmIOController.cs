@@ -103,13 +103,11 @@ namespace AstmLib.DataLinkLayer
 	            _uploadEnabled = true;
 	        }
 
-	        if (_stream.IsInFaultState)
+	        if (_stream.IsInFaultState && !_stream.Reopen())
 	        {
-	            if (!_stream.Reopen())
-	            {
-	                return;
-	            }
-	        }
+                Thread.Sleep(_lowLevelSettings.ConnectionRetryTime);
+                return;
+            }
 
             switch (_state)
             {
@@ -183,29 +181,26 @@ namespace AstmLib.DataLinkLayer
             }
         }
 
-		private void run(CancellationToken ct)
-		{
+        private void run(CancellationToken ct)
+        {
             _state = DataLinkStates.Neutral;
-		    try
-		    {
-		        while (!ct.IsCancellationRequested)
-		        {
+            while (!ct.IsCancellationRequested)
+            {
+                try
+                {
                     ProcessCurrentState(_downloader, _uploader);
                 }
+                catch (Exception ex)
+                {
+                    _log.LogTrace(ex.ToString());
+                    Thread.Sleep(_lowLevelSettings.ConnectionRetryTime);
+                }
             }
-		    catch (Exception ex)
-		    {
-		        _log.LogError($"Error occurred and AstmIOController will be stopped: {ex}");
-                raiseUnhandledErrorOccured(new IOMessageEventArgs(_downloader.Message, ex));
-		    }
-		    finally
-		    {
-                _log.LogInformation("Controller stopped");
-                IsRunning = false;
-		    }
-		}
-		
-		private void raiseMessageUploadCompleted(IOMessageEventArgs args)
+
+            IsRunning = false;
+        }
+
+        private void raiseMessageUploadCompleted(IOMessageEventArgs args)
 		{
             Task.Run(() =>
             {

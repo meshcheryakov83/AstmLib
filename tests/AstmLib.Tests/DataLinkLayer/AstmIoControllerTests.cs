@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 using Shouldly;
 using Xunit;
@@ -14,7 +12,7 @@ namespace AstmLib.Tests.DataLinkLayer
     public class AstmIOControllerTests
     {
         [Fact]
-        public void Test1()
+        public void IntegrationTest()
         {
             string uploadedMessage = null;
             string downloadedMessage = null;
