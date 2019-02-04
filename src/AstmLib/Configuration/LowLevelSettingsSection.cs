@@ -10,5 +10,6 @@ namespace AstmLib.Configuration
 		public int DelayUploadAfterUploadError { get; set; } = 2000;
 		public int EnqWaitTimeout { get; set; } = 15000;
 		public int WaitFrameTimeout { get; set; } = 30000;
-	}
+        public int ConnectionRetryTime { get; set; } = 5000;
+    }
 }

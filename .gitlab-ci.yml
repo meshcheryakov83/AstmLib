@@ -1,23 +1,20 @@
-services:
-  - docker:dind
-
 default-job:
-  image: microsoft/dotnet:2.0-sdk
+  image: microsoft/dotnet:2.1-sdk
   script:
-    - dotnet restore -s $MYNUGET_URL -s $NUGET_URL
-    - dotnet build $PROJECT_PATH
+    - dotnet restore -s $NUGET_URL -s $MYNUGET_URL
+    - dotnet build ./src/$CI_PROJECT_NAME
     - find ./tests -type f -name '*.csproj' | xargs -Iz dotnet test z
   except:
     - tags
 
 tags-job:
-  image: microsoft/dotnet:2.0-sdk
+  image: microsoft/dotnet:2.1-sdk
   script:
-    - sed -i 's/0.0.0/'$CI_BUILD_TAG'/' $PROJECT_PATH/$CI_PROJECT_NAME.csproj
-    - cat $PROJECT_PATH/$CI_PROJECT_NAME.csproj
+    - sed -i 's/0.0.0/'$CI_BUILD_TAG'/' ./src/$CI_PROJECT_NAME/$CI_PROJECT_NAME.csproj
+    - cat ./src/$CI_PROJECT_NAME/$CI_PROJECT_NAME.csproj
     - dotnet restore -s $MYNUGET_URL -s $NUGET_URL
     - find ./tests -type f -name '*.csproj' | xargs -Iz dotnet test z
-    - dotnet pack $PROJECT_PATH/$CI_PROJECT_NAME.csproj -c Release
-    - dotnet nuget push $PROJECT_PATH/bin/Release/$CI_PROJECT_NAME.$CI_BUILD_TAG.nupkg -k "$MYNUGET_API_KEY" -s "$MYNUGET_URL"
+    - dotnet pack ./src/$CI_PROJECT_NAME/$CI_PROJECT_NAME.csproj -c Release
+    - dotnet nuget push ./src/$CI_PROJECT_NAME/bin/Release/$CI_PROJECT_NAME.$CI_BUILD_TAG.nupkg -k "$MYNUGET_API_KEY" -s "$MYNUGET_URL"
   only:
     - tags
