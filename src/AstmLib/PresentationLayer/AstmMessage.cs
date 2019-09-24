@@ -1,26 +1,20 @@
-using System;
 using System.Collections.Generic;
 using System.Text;
-using AstmLib.PresentationLayer;
 
 namespace AstmLib.PresentationLayer
 {
 	public class AstmMessage : IEnumerable<AstmRecord>, IEnumerable<string>
 	{
-		AstmHeaderRecord _headerRecord;
-		public AstmHeaderRecord HeaderRecord
+        public AstmHeaderRecord HeaderRecord { get; set; }
+
+        public override string ToString()
 		{
-			get { return _headerRecord; }
-			set { _headerRecord = value; }
-		}
-		
-		public override string ToString()
-		{
-			StringBuilder message = new StringBuilder();
-			foreach(AstmRecord record in this)
+			var message = new StringBuilder();
+			foreach(var record in this)
 			{
-				message.Append(record.ToString() + "\r\n");
+				message.Append(record + "\r\n");
 			}
+
 			return message.ToString();
 		}
 

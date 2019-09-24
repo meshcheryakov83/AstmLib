@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AstmLib.DataLinkLayer.Exceptions;
-using AstmLib.PresentationLayer;
-using ApplicationException = AstmLib.DataLinkLayer.Exceptions.ApplicationException;
+﻿using ApplicationException = AstmLib.DataLinkLayer.Exceptions.ApplicationException;
 
 namespace AstmLib.PresentationLayer.Exceptions
 {
@@ -12,9 +7,9 @@ namespace AstmLib.PresentationLayer.Exceptions
 		private AstmMessage[] _successfullyBuildedMessages;
 		public AstmMessage[] SuccessfullyBuildedMessages
 		{
-			get { return _successfullyBuildedMessages; }
-			set { _successfullyBuildedMessages = value; }
-		}
+			get => _successfullyBuildedMessages;
+            set => _successfullyBuildedMessages = value;
+        }
 
 		public AstmMessageBuilderException(string message, AstmMessage[] successfullyBuildedMessages)
 			: base(message)

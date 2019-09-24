@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using AstmLib.Configuration;
 using AstmLib.DataLinkLayer.Exceptions;
 
@@ -12,26 +10,13 @@ namespace AstmLib.DataLinkLayer
 	{
 		public const int BODY_MAX_LENGTH = 240;
 
-		private string _body;
-		private int _fn;
-		private FrameTypes _frameType;
+        public string Body { get; }
 
-		public string Body
-		{
-			get { return this._body; }
-		}
+        public int FN { get; }
 
-		public int FN
-		{
-			get { return this._fn; }
-		}
+        public FrameTypes FrameType { get; }
 
-		public FrameTypes FrameType
-		{
-			get { return this._frameType; }
-		}
-
-	    private readonly AstmLowLevelSettings _lowLevelSettings;
+        private readonly AstmLowLevelSettings _lowLevelSettings;
 
         public Frame(string body, int fn, FrameTypes frameType, AstmLowLevelSettings lowLevelSettings)
         {
@@ -44,9 +29,9 @@ namespace AstmLib.DataLinkLayer
 			if (fn < 0 || fn > 7)
 				throw new FrameConstructionException("Can not construct frame", new ArgumentOutOfRangeException("FN must be between 0..7"));
 
-			this._body = body;
-			this._fn = fn;
-			this._frameType = frameType;
+			Body = body;
+			FN = fn;
+			FrameType = frameType;
             _lowLevelSettings = lowLevelSettings;
 		}
 
@@ -66,7 +51,7 @@ namespace AstmLib.DataLinkLayer
 			line = line.TrimEnd(new char[] { (char)0x0D, (char)0xA });
 
 			// Extract FN
-			int fn = -1;
+			var fn = -1;
 			try
 			{
 				fn = int.Parse(line[0].ToString());
@@ -77,11 +62,11 @@ namespace AstmLib.DataLinkLayer
 			}
 
 			// Extract CRC
-			string crc = line.Substring(line.Length - 2);
+			var crc = line.Substring(line.Length - 2);
 
 			// Extract terminator
-			char terminator = line.Substring(line.Length - 3, 1)[0];
-			FrameTypes frameType = FrameTypes.TerminationFrame;
+			var terminator = line.Substring(line.Length - 3, 1)[0];
+			FrameTypes frameType;
 			if (terminator == (char)0x17)
 				frameType = FrameTypes.IntermediateFrame;
 			else if (terminator == (char)0x03)
@@ -90,9 +75,9 @@ namespace AstmLib.DataLinkLayer
 				throw new FrameParseException("Can not parse terminator in frame '{0}'", line);
 
 			// Extract body
-			string body = line.Substring(1, line.Length - 4);
+			var body = line.Substring(1, line.Length - 4);
 
-			Frame frame = null;
+			Frame frame;
 			try
 			{
 				frame = new Frame(body, fn, frameType, lowLevelSettings);
@@ -106,10 +91,9 @@ namespace AstmLib.DataLinkLayer
 		
 		public override string ToString()
 		{
-			string text = _fn.ToString() +
-				_body + (_frameType == FrameTypes.IntermediateFrame ? (char)DataLinkControlCodes.ETB : (char)DataLinkControlCodes.ETX);
+			var text = FN + Body + (FrameType == FrameTypes.IntermediateFrame ? (char)DataLinkControlCodes.ETB : (char)DataLinkControlCodes.ETX);
 
-			string crc = FrameUtils.CalcCRC(text);
+			var crc = FrameUtils.CalcCRC(text);
 			return (char)DataLinkControlCodes.STX + text + crc + 
 				(char)DataLinkControlCodes.CR + (char)DataLinkControlCodes.LF;
 		}

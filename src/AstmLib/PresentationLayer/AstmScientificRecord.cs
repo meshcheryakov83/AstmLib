@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using AstmLib.Configuration;
 
 namespace AstmLib.PresentationLayer
@@ -21,9 +18,9 @@ namespace AstmLib.PresentationLayer
 
 		public string SequenceNumber
 		{
-			get { return Fields[1]; }
-			set { Fields[1] = value; }
-		}
+			get => Fields[1];
+            set => Fields[1] = value;
+        }
 
 		#endregion
 	}

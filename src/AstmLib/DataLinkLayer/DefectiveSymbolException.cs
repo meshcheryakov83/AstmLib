@@ -1,6 +1,4 @@
-﻿using System;
-using AstmLib.DataLinkLayer.Exceptions;
-using ApplicationException = AstmLib.DataLinkLayer.Exceptions.ApplicationException;
+﻿using ApplicationException = AstmLib.DataLinkLayer.Exceptions.ApplicationException;
 
 namespace AstmLib.DataLinkLayer
 {

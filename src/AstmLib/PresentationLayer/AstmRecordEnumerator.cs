@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AstmLib.PresentationLayer;
+﻿using System.Collections.Generic;
 
 namespace AstmLib.PresentationLayer
 {
@@ -12,12 +9,9 @@ namespace AstmLib.PresentationLayer
 
 		#region IEnumerator<AstmRecord> Members
 
-		public AstmRecord Current
-		{
-			get { return _current; }
-		}
+		public AstmRecord Current => _current;
 
-		#endregion
+        #endregion
 
 		#region IDisposable Members
 
@@ -31,12 +25,9 @@ namespace AstmLib.PresentationLayer
 
 		#region IEnumerator Members
 
-		object System.Collections.IEnumerator.Current
-		{
-			get { return _current; }
-		}
+		object System.Collections.IEnumerator.Current => _current;
 
-		public bool MoveNext()
+        public bool MoveNext()
 		{
 			if (_current == null)
 				_current = _message.HeaderRecord;
@@ -73,11 +64,8 @@ namespace AstmLib.PresentationLayer
 
 		#region IEnumerator<string> Members
 
-		string IEnumerator<string>.Current
-		{
-			get { return _current.ToString(); }
-		}
+		string IEnumerator<string>.Current => _current.ToString();
 
-		#endregion
+        #endregion
 	}
 }

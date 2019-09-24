@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace AstmLib.DataLinkLayer
 {
@@ -44,7 +42,7 @@ namespace AstmLib.DataLinkLayer
 
 		public void StopAllTimers()
 		{
-			foreach (SingleTimer singleTimer in _timers.Values)
+			foreach (var singleTimer in _timers.Values)
 			{
 				singleTimer.StopTimer();
 			}

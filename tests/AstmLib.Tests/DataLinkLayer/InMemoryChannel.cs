@@ -4,12 +4,12 @@ using AstmLib.DataLinkLayer;
 
 namespace AstmLib.Tests.DataLinkLayer
 {
-    public class InMemotyChannel : IAstmChannel
+    public class InMemoryChannel : IAstmChannel
     {
-        private Queue<byte> _in;
-        private Queue<byte> _out;
+        private readonly Queue<byte> _in;
+        private readonly Queue<byte> _out;
 
-        public InMemotyChannel(Queue<byte> @in, Queue<byte> @out)
+        public InMemoryChannel(Queue<byte> @in, Queue<byte> @out)
         {
             _in = @in;
             _out = @out;

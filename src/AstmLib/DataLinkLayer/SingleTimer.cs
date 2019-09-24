@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 
 namespace AstmLib.DataLinkLayer
 {
 	public class SingleTimer
 	{
-		private System.Threading.Timer _timer;
+		private readonly Timer _timer;
 		private bool _timerTimeout = true;
 		private bool _started = false;
 
 		public SingleTimer()
 		{
-			_timer = new System.Threading.Timer(new System.Threading.TimerCallback(delegate { _timerTimeout = true; }), null, Timeout.Infinite, Timeout.Infinite);
+			_timer = new Timer(delegate { _timerTimeout = true; }, null, Timeout.Infinite, Timeout.Infinite);
 		}
 
 		public void StartTimer(int milisecond)
@@ -43,6 +40,6 @@ namespace AstmLib.DataLinkLayer
 			}
 		}
 
-		public bool Started { get { return _started; } }
-	}
+		public bool Started => _started;
+    }
 }

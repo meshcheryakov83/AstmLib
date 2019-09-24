@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using AstmLib.Configuration;
 
 namespace AstmLib.DataLinkLayer
@@ -10,7 +9,7 @@ namespace AstmLib.DataLinkLayer
 		public static string CalcCRC(string text)
 		{
 			byte crc = 0;
-			foreach (char ch in text)
+			foreach (var ch in text)
 				crc += (byte)ch;
 
 			return crc.ToString("X2");
@@ -23,15 +22,15 @@ namespace AstmLib.DataLinkLayer
 
 		public static Frame[] SplitToFrames(string message, AstmLowLevelSettings lowLevelSettings)
 		{
-			string[] lines = message.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-			List<Frame> frames = new List<Frame>();
-			int fn = 1;
-			foreach (string line in lines)
+			var lines = message.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+			var frames = new List<Frame>();
+			var fn = 1;
+			foreach (var line in lines)
 			{
-				string lineCopy = line;
+				var lineCopy = line;
 				while (lineCopy.Length > Frame.BODY_MAX_LENGTH)
 				{
-					string body = lineCopy.Substring(0, Frame.BODY_MAX_LENGTH);
+					var body = lineCopy.Substring(0, Frame.BODY_MAX_LENGTH);
 					lineCopy = lineCopy.Substring(Frame.BODY_MAX_LENGTH);
 					frames.Add(new Frame(body, fn, FrameTypes.IntermediateFrame, lowLevelSettings));
 					fn = IncrementFN(fn);

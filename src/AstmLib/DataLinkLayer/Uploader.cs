@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
+п»їusing System;
 using System.Text;
-using System.IO;
-using System.Threading;
 using AstmLib.DataLinkLayer.Exceptions;
 using AstmLib.Configuration;
+using AstmLib.Utilities;
 using Microsoft.Extensions.Logging;
 
 namespace AstmLib.DataLinkLayer
@@ -16,11 +14,11 @@ namespace AstmLib.DataLinkLayer
         void ResetAndUpload(string message);
 
         /// <summary>
-        /// Закачивает максимум один фрейм и возвращает управление. При этом сохраняет свое состояние и ждет повторного вызова,
-        /// для того что бы закончить upload.
+        /// Р—Р°РєР°С‡РёРІР°РµС‚ РјР°РєСЃРёРјСѓРј РѕРґРёРЅ С„СЂРµР№Рј Рё РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРїСЂР°РІР»РµРЅРёРµ. РџСЂРё СЌС‚РѕРј СЃРѕС…СЂР°РЅСЏРµС‚ СЃРІРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ Рё Р¶РґРµС‚ РїРѕРІС‚РѕСЂРЅРѕРіРѕ РІС‹Р·РѕРІР°,
+        /// РґР»СЏ С‚РѕРіРѕ С‡С‚Рѕ Р±С‹ Р·Р°РєРѕРЅС‡РёС‚СЊ upload.
         /// </summary>
-        /// <exception cref="UploadException">Выгрузка прервана из-за ошибок</exception>
-        /// <exception cref="InvalidOperationException">Выгрузка уже закончена</exception>
+        /// <exception cref="UploadException">Р’С‹РіСЂСѓР·РєР° РїСЂРµСЂРІР°РЅР° РёР·-Р·Р° РѕС€РёР±РѕРє</exception>
+        /// <exception cref="InvalidOperationException">Р’С‹РіСЂСѓР·РєР° СѓР¶Рµ Р·Р°РєРѕРЅС‡РµРЅР°</exception>
         void ExecuteUploadStep();
     }
 
@@ -43,14 +41,14 @@ namespace AstmLib.DataLinkLayer
 		private const string WAIT_DELAY_TIMER_NAME = "timer2";
 
 		private string _message;
-		private IAstmChannel _stream;
+		private readonly IAstmChannel _stream;
 		private Frame[] _frames;
 		private int _frameCounter = -1;
 		private DataLinkLayerException _exceptionOccured = null;
 		private int _errorCounterNAK = 0;
 		private int _errorCounterENQ = 0;
 		private int _errorCounterDefective = 0;
-		private bool _havePriority = true;
+		private readonly bool _havePriority = true;
 		private Frame _currentFrame = null;
 		private bool _uploadCompleted = false;
 		private States _state;
@@ -93,11 +91,11 @@ namespace AstmLib.DataLinkLayer
 		}
 
 		/// <summary>
-		/// Закачивает максимум один фрейм и возвращает управление. При этом сохраняет свое состояние и ждет повторного вызова,
-		/// для того что бы закончить upload.
+		/// Р—Р°РєР°С‡РёРІР°РµС‚ РјР°РєСЃРёРјСѓРј РѕРґРёРЅ С„СЂРµР№Рј Рё РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРїСЂР°РІР»РµРЅРёРµ. РџСЂРё СЌС‚РѕРј СЃРѕС…СЂР°РЅСЏРµС‚ СЃРІРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ Рё Р¶РґРµС‚ РїРѕРІС‚РѕСЂРЅРѕРіРѕ РІС‹Р·РѕРІР°,
+		/// РґР»СЏ С‚РѕРіРѕ С‡С‚Рѕ Р±С‹ Р·Р°РєРѕРЅС‡РёС‚СЊ upload.
 		/// </summary>
-		/// <exception cref="UploadException">Выгрузка прервана из-за ошибок</exception>
-		/// <exception cref="InvalidOperationException">Выгрузка уже закончена</exception>
+		/// <exception cref="UploadException">Р’С‹РіСЂСѓР·РєР° РїСЂРµСЂРІР°РЅР° РёР·-Р·Р° РѕС€РёР±РѕРє</exception>
+		/// <exception cref="InvalidOperationException">Р’С‹РіСЂСѓР·РєР° СѓР¶Рµ Р·Р°РєРѕРЅС‡РµРЅР°</exception>
 		public void ExecuteUploadStep()
 		{
 			byte[] buf = null;
@@ -122,7 +120,7 @@ namespace AstmLib.DataLinkLayer
 					try
 					{
 					    _stream.ReadTimeout = 100;
-                        byte b = (byte)_stream.ReadByte();
+                        var b = (byte)_stream.ReadByte();
 						_timersManager.StopTimer(WAIT_ANSWER_TIMER_NAME);
 						_log.LogInformation("[receive]{0}", ControlCodesUtility.ToControlCode(b));
 						if (b == (byte)DataLinkControlCodes.ACK)
@@ -185,14 +183,14 @@ namespace AstmLib.DataLinkLayer
 						break;
 					}
 					_currentFrame = _frames[_frameCounter];
-					buf = ASCIIEncoding.ASCII.GetBytes(_currentFrame.ToString());
+					buf = Encoding.ASCII.GetBytes(_currentFrame.ToString());
 					_stream.Write(buf, 0, buf.Length);
 					_log.LogInformation("[send]{0}", ControlCodesUtility.ReplaceControlCodesToLoggingCodes(_currentFrame.ToString()));
 					_timersManager.StartTimer(WAIT_ANSWER_TIMER_NAME, 15000);
 					_state = States.TransferPhaseWaitAnswer;
 					break;
 				case States.TransferPhaseResendFrame:
-					buf = ASCIIEncoding.ASCII.GetBytes(_currentFrame.ToString());
+					buf = Encoding.ASCII.GetBytes(_currentFrame.ToString());
 					_stream.Write(buf, 0, buf.Length);
 					_log.LogInformation("[send]{0}", ControlCodesUtility.ReplaceControlCodesToLoggingCodes(_currentFrame.ToString()));
 					_timersManager.StartTimer(WAIT_ANSWER_TIMER_NAME, 15000);
@@ -202,7 +200,7 @@ namespace AstmLib.DataLinkLayer
 					try
 					{
 					    _stream.ReadTimeout = 100;
-                        byte b = (byte)_stream.ReadByte();
+                        var b = (byte)_stream.ReadByte();
 						_timersManager.StopTimer(WAIT_ANSWER_TIMER_NAME);
 						_log.LogInformation("[receive]{0}", ControlCodesUtility.ToControlCode(b));
 						if (b == (byte)DataLinkControlCodes.ACK)

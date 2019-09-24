@@ -164,7 +164,7 @@ namespace AstmLib.DataLinkLayer
                 case DataLinkStates.Neutral:
                     if (_uploadQueue.Count > 0 && _uploadEnabled)
                     {
-                        string message = "";
+                        var message = "";
                         lock (_uploadQueue)
                         {
                             message = _uploadQueue.Dequeue();

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using AstmLib.DataLinkLayer;
 
 namespace AstmLib.Utilities
@@ -9,10 +7,10 @@ namespace AstmLib.Utilities
 	{
 		public static string ToControlCode(byte b)
 		{
-			string ret = string.Format("{0}", b);
+			var ret = $"{b}";
 			try
 			{
-				ret = string.Format("<{0}>", ((DataLinkControlCodes)b).ToString());
+				ret = $"<{((DataLinkControlCodes) b).ToString()}>";
 			}
 			catch (Exception)
 			{
@@ -20,15 +18,15 @@ namespace AstmLib.Utilities
 			return ret;
 		}
 
-		public static string ReplaceWithToControlCode(string arg)
+		public static string ReplaceControlCodesToLoggingCodes(string arg)
 		{
 
-			Array controlBytes = Enum.GetValues(typeof(DataLinkControlCodes));
+			var controlBytes = Enum.GetValues(typeof(DataLinkControlCodes));
 
 			foreach (byte b in controlBytes)
 			{
 				if (arg.Contains(((char)b).ToString()))
-					arg = arg.Replace(((char)b).ToString(), string.Format("<{0}>", ((DataLinkControlCodes)b).ToString()));
+					arg = arg.Replace(((char)b).ToString(), $"<{((DataLinkControlCodes) b).ToString()}>");
 			}
 
 			return arg;

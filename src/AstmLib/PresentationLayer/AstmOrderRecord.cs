@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using AstmLib.Configuration;
 
 namespace AstmLib.PresentationLayer
@@ -9,7 +6,8 @@ namespace AstmLib.PresentationLayer
 	{
 		#region Constructors
 
-		public AstmOrderRecord(AstmHighLevelSettings highLevelSettings) : base(highLevelSettings)
+		public AstmOrderRecord(AstmHighLevelSettings highLevelSettings)
+            : base(highLevelSettings)
         {
 			Fields = new string[31];
 			RecordTypeId = AstmRecordTypeIds.Order;
@@ -21,70 +19,54 @@ namespace AstmLib.PresentationLayer
 
 		public string SequenceNumber
 		{
-			get { return Fields[1]; }
-			set { Fields[1] = value; }
-		}
+			get => Fields[1];
+            set => Fields[1] = value;
+        }
 
 		public string SpecimenId
 		{
-			get { return Fields[2]; }
-			set { Fields[2] = value; }
-		}
+			get => Fields[2];
+            set => Fields[2] = value;
+        }
 
 		public string InstrumentSpecimenId
 		{
-			get { return Fields[3]; }
-			set { Fields[3] = value; }
-		}
+			get => Fields[3];
+            set => Fields[3] = value;
+        }
 
 		public string UniversalTestId
 		{
-			get { return Fields[4]; }
-			set { Fields[4] = value; }
-		}
+			get => Fields[4];
+            set => Fields[4] = value;
+        }
 
 		public string Priority
 		{
-			get { return Fields[5]; }
-			set { Fields[5] = value; }
-		}
+			get => Fields[5];
+            set => Fields[5] = value;
+        }
 
 		public string ActionCode
 		{
-			get { return Fields[11]; }
-			set { Fields[11] = value; }
-		}
+			get => Fields[11];
+            set => Fields[11] = value;
+        }
 
 		public string SpecimenDescriptor
 		{
-			get { return Fields[15]; }
-			set { Fields[15] = value; }
-		}
+			get => Fields[15];
+            set => Fields[15] = value;
+        }
 
 		public string ReportTypes
 		{
-			get { return Fields[25]; }
-			set { Fields[25] = value; }
-		}
+			get => Fields[25];
+            set => Fields[25] = value;
+        }
 
 		#endregion
 
-		public AstmResultRecord[] Results
-		{
-			get
-			{
-				return GetChildrenOfType<AstmResultRecord>();
-			}
-		}
-
-		//public void AddComment(AstmCommentRecord comment)
-		//{
-		//    this.AddChild(comment);
-		//}
-
-		//public void AddResult(AstmResultRecord result)
-		//{
-		//    this.AddChild(result);
-		//}
+		public AstmResultRecord[] Results => GetChildrenOfType<AstmResultRecord>();
 	}
 }

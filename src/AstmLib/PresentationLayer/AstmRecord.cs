@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using AstmLib.DataLinkLayer;
 using AstmLib.Configuration;
-using AstmLib.DataLinkLayer.Exceptions;
 using ApplicationException = System.ApplicationException;
 
 namespace AstmLib.PresentationLayer
@@ -13,11 +11,10 @@ namespace AstmLib.PresentationLayer
 	{
 		#region Fields
 
-		protected string[] _fields;
-		protected AstmRecord _firstChild;
+        protected AstmRecord _firstChild;
 		protected AstmRecord _next;
 		protected AstmRecord _parent;
-	    private AstmHighLevelSettings _highLevelSettings;
+	    private readonly AstmHighLevelSettings _highLevelSettings;
 
 	    protected AstmRecord(AstmHighLevelSettings highLevelSettings)
 	    {
@@ -30,29 +27,24 @@ namespace AstmLib.PresentationLayer
 
         #region Record's content 
 
-        public string[] Fields
-		{
-			get { return _fields; }
-			set { _fields = value; }
-		}
+        public string[] Fields { get; protected set; }
 
-		public string RecordTypeId
+        public string RecordTypeId
 		{
-			get { return _fields[0]; }
-			set { _fields[0] = value; }
-		}
+			get => Fields[0];
+            set => Fields[0] = value;
+        }
 
 		public string GetPart(int fieldNumber, int partNumber)
 		{
 			if (Fields.Length <= fieldNumber)
-				throw new IndexOutOfRangeException(string.Format("Field number {0} doesn't exist", fieldNumber));
+				throw new IndexOutOfRangeException($"Field number {fieldNumber} doesn't exist");
 			if (Fields[fieldNumber] == null)
 				return null;
 			var snParts = Fields[fieldNumber].Split(new[] { '^' }, StringSplitOptions.None);
 			if (snParts.Length <= partNumber)
 			{
-				return null;
-				//throw new IndexOutOfRangeException(string.Format("Part {0} doesn't exist in field {1}", partNumber, fieldNumber));
+				throw new IndexOutOfRangeException($"Part {partNumber} doesn't exist in field {fieldNumber}");
 			}
 				
 			return snParts[partNumber].Trim();
@@ -61,7 +53,7 @@ namespace AstmLib.PresentationLayer
 		public string GetField(int fieldNumber)
 		{
 			if (Fields.Length <= fieldNumber)
-				throw new IndexOutOfRangeException(string.Format("Field number {0} doesn't exist", fieldNumber));
+				throw new IndexOutOfRangeException($"Field number {fieldNumber} doesn't exist");
 			return Fields[fieldNumber].Trim();
 		}
 
@@ -69,22 +61,16 @@ namespace AstmLib.PresentationLayer
 
 		#region Navigation
 
-		public AstmRecord Next
-		{
-			get { return _next; }
-		}
+		public AstmRecord Next => _next;
 
-		public AstmRecord FirstChild
-		{
-			get { return _firstChild; }
-		}
+        public AstmRecord FirstChild => _firstChild;
 
-		public AstmRecord[] Children
+        public AstmRecord[] Children
 		{
 			get
 			{
-				List<AstmRecord> children = new List<AstmRecord>();
-				AstmRecord child = _firstChild;
+				var children = new List<AstmRecord>();
+				var child = _firstChild;
 				while(child!=null)
 				{
 					children.Add(child);
@@ -94,19 +80,13 @@ namespace AstmLib.PresentationLayer
 			}
 		}
 
-		public bool HasChildren
-		{
-			get
-			{
-				return _firstChild != null;
-			}
-		}
+		public bool HasChildren => _firstChild != null;
 
-		protected T[] GetChildrenOfType<T>()
+        protected T[] GetChildrenOfType<T>()
 			where T : AstmRecord
 		{
-			List<T> children = new List<T>();
-			foreach (AstmRecord child in Children)
+			var children = new List<T>();
+			foreach (var child in Children)
 			{
 				if (child is T)
 					children.Add((T)child);
@@ -115,25 +95,22 @@ namespace AstmLib.PresentationLayer
 			return children.ToArray();
 		}
 
-		public AstmRecord Parent
-		{
-			get { return _parent; }
-		}
+		public AstmRecord Parent => _parent;
 
-		#endregion
+        #endregion
 
 		#region Manipulation
 		
 		public void AddChild(AstmRecord record)
 		{
-		    int seqNum = 0;
+		    var seqNum = 0;
 		    if (_firstChild == null)
 		    {
 		        _firstChild = record;
 		    }
 		    else
 		    {
-		        AstmRecord current = _firstChild;
+		        var current = _firstChild;
 				
 		        if (current.RecordTypeId == record.RecordTypeId)
 		            seqNum++;
@@ -148,20 +125,15 @@ namespace AstmLib.PresentationLayer
 		        current._next = record;
 		    }
 		    record._parent = this;
-		    record._fields[1] = (seqNum+1).ToString();
-		}
-		
-		public void RemoveChild(AstmRecord record)
-		{
-			throw new InvalidOperationException("This operation doesn't implementd yet");
+		    record.Fields[1] = (seqNum+1).ToString();
 		}
 
-		#endregion
+        #endregion
 
 		public override string ToString()
 		{
-			string line = "";
-			foreach (string field in _fields)
+			var line = "";
+			foreach (var field in Fields)
 			{
 				line += field + "|";
 			}
@@ -170,7 +142,7 @@ namespace AstmLib.PresentationLayer
 				line = line.TrimEnd(new char[] { '|' });
 
 			// Each record ends with <CR>
-			return line + ((char)DataLinkControlCodes.CR).ToString();
+			return line + ((char)DataLinkControlCodes.CR);
 		}
 
 		#endregion
@@ -207,11 +179,8 @@ namespace AstmLib.PresentationLayer
 					record = new AstmQueryRecord(highLevelSettings);
 					break;
 				default:
-					throw new ApplicationException(string.Format("Unknown astm record type '{0}'", line[0]));
+					throw new ApplicationException($"Unknown astm record type '{line[0]}'");
 			}
-
-			//if (record.RecordTypeId != Activator.CreateInstance<T>().RecordTypeId)
-			//    throw new BuildAstmRecordException("Record ID is invalid");
 
 			return fillFields(line, record);
 		}
@@ -219,9 +188,9 @@ namespace AstmLib.PresentationLayer
 		public static T Parse<T>(string line, AstmHighLevelSettings highLevelSettings)
 			where T : AstmRecord
 		{
-			AstmRecord record = Parse(line, highLevelSettings);
+			var record = Parse(line, highLevelSettings);
 			if (!(record is T))
-				throw new ApplicationException(string.Format("Type of record is not {0}", typeof(T).Name));
+				throw new ApplicationException($"Type of record is not {typeof(T).Name}");
 
 			return (T)record;
 		}
@@ -229,11 +198,11 @@ namespace AstmLib.PresentationLayer
 		private static AstmRecord fillFields(string arg, AstmRecord record)
 		{
 			arg = arg.Trim(new char[] { '\r', '\n' });
-			string[] fields = arg.Split(new char[] { '|' });
+			var fields = arg.Split(new char[] { '|' });
 
-			if (fields.Length > record._fields.Length)
+			if (fields.Length > record.Fields.Length)
 			{
-				if (fields.Length == record._fields.Length + 1 || fields.Last() == "")
+				if (fields.Length == record.Fields.Length + 1 || fields.Last() == "")
 				{
 					// It's ok if last field was "" after |
 					// for example:
@@ -246,8 +215,8 @@ namespace AstmLib.PresentationLayer
 			}
 				
 
-			for (int i = 0; i < fields.Length && i < record.Fields.Length; i++)
-				record._fields[i] = fields[i];
+			for (var i = 0; i < fields.Length && i < record.Fields.Length; i++)
+				record.Fields[i] = fields[i];
 			return record;
 		}
 

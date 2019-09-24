@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AstmLib.Configuration;
 using AstmLib.PresentationLayer;
 using Shouldly;
@@ -14,14 +12,14 @@ namespace BaseLib.Astm.Tests
         [Fact]
         public void Query_should_be_parsed_successfully()
         {
-            List<string> records = new List<string>
+            var records = new List<string>
             {
                 "H|\\^&\r",
                 "Q|1|123abc|^^^ALL\r",
                 "L|1\r"
             };
 
-            AstmMessage[] msg = AstmMessageBuilder.Build(records.ToArray(), new AstmHighLevelSettings());
+            var msg = AstmMessageBuilder.Build(records.ToArray(), new AstmHighLevelSettings());
             msg.Length.ShouldBe(1);
             msg[0].HeaderRecord.Children.Length.ShouldBe(1);
             ((AstmQueryRecord)msg[0].HeaderRecord.Children.First()).StartingRangeId.ShouldBe("123abc");
@@ -30,7 +28,7 @@ namespace BaseLib.Astm.Tests
         [Fact]
         public void Multi_result_message__should_be_parsed_successfully()
         {
-            string message =
+            var message =
                 "H|\\^&|||Helena Laboratories^HemoRAM^Version 1.3^SN 631715802|1530 Lindbergh Dr., Beaumont, TX. 77704||409-842-3714||||P|1394-97|20171121132305\r" +
 "P|1|4545067|||||||||||||||||||||||||||||||||\r" +
 "O|1||122|^^^Platelet Aggregation^*Screen 1^Adenosine Diphosphate^Patient^^0^^0,00^50,00^uM|||||||||||||||||||||F\r" +
@@ -42,7 +40,7 @@ namespace BaseLib.Astm.Tests
 "R|6|^^^^^^^^^^^^^LagTime|5,2|sec|||||||20171120171146||\r" +
 "L|1|N";
             
-            AstmMessage[] msg = AstmMessageBuilder.Build(message.Split('\r'), new AstmHighLevelSettings());
+            var msg = AstmMessageBuilder.Build(message.Split('\r'), new AstmHighLevelSettings());
             msg.Length.ShouldBe(1);
             msg[0].HeaderRecord.Patients.First().Orders.First().Children.Length.ShouldBe(6);
         }

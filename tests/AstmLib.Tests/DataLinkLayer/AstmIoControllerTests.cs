@@ -6,6 +6,7 @@ using Xunit;
 using AstmLib.Configuration;
 using AstmLib.DataLinkLayer;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Debug;
 
 namespace AstmLib.Tests.DataLinkLayer
 {
@@ -18,20 +19,20 @@ namespace AstmLib.Tests.DataLinkLayer
             string downloadedMessage = null;
             Exception uploadException = null;
             Exception downloadException = null;
-            string message = @"tests\r\n"
+            var message = @"tests\r\n"
                              + "esttesttesttesttesttesttestesttesttesttesttesttesttesttestesttesttesttestt"
                              + "esttesttesttestesttesttesttesttesttesttesttestesttesttesttesttesttesttesttestesttes"
                              + "ttesttesttesttesttesttestesttesttesttesttesttesttesttestesttesttesttestte"
                              + "sttesttesttestesttesttesttesttesttesttesttestesttesttesttesttesttesttesttest\r\n";
             var loggingFactory = new LoggerFactory();
-            loggingFactory.AddDebug();
+            loggingFactory.AddProvider(new DebugLoggerProvider());
 
-            Queue<byte> buf1 = new Queue<byte>();
-            Queue<byte> buf2 = new Queue<byte>();
+            var buf1 = new Queue<byte>();
+            var buf2 = new Queue<byte>();
 
             var taskListener = Task.Run(async () =>
             {
-                var stream = new InMemotyChannel(buf1, buf2);
+                var stream = new InMemoryChannel(buf1, buf2);
                 var lowLevelSettings = new AstmLowLevelSettings();
 
                 var controller = new AstmIOController(stream, lowLevelSettings, loggingFactory);
@@ -52,7 +53,7 @@ namespace AstmLib.Tests.DataLinkLayer
 
             var taskClient = Task.Run(async () =>
             {
-                var stream = new InMemotyChannel(buf2, buf1);
+                var stream = new InMemoryChannel(buf2, buf1);
                 var lowLevelSettings = new AstmLowLevelSettings();
 
                 var controller = new AstmIOController(stream, lowLevelSettings, loggingFactory);

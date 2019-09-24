@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
-using System.Threading;
 using AstmLib.Configuration;
 using AstmLib.DataLinkLayer.Exceptions;
+using AstmLib.Utilities;
 using Microsoft.Extensions.Logging;
 
 namespace AstmLib.DataLinkLayer
@@ -90,7 +89,7 @@ namespace AstmLib.DataLinkLayer
 			{
 				case States.WaitEstablishmentPhase:
 			        _stream.ReadTimeout = 100;
-					byte b = (byte)_stream.ReadByte();
+					var b = (byte)_stream.ReadByte();
 					if (b == (byte)DataLinkControlCodes.ENQ)
 					{
 						_log.LogInformation($"[receive]{ControlCodesUtility.ToControlCode(b)}");
@@ -143,10 +142,10 @@ namespace AstmLib.DataLinkLayer
 			Exception frameError = null;
 			try
 			{
-				string decodedString = ASCIIEncoding.ASCII.GetString(_buf.ToArray(), 0, _buf.Count);
+				var decodedString = Encoding.ASCII.GetString(_buf.ToArray(), 0, _buf.Count);
 				_log.LogInformation("[receive]{0}", ControlCodesUtility.ReplaceControlCodesToLoggingCodes(decodedString));
 				frame = Frame.Parse(decodedString, _lowLevelSettings);
-				int expectedFN = (_previousFN + 1) % 8;
+				var expectedFN = (_previousFN + 1) % 8;
 				if (frame.FN != expectedFN)
 					frameError = new FrameNumberException("Expected frame number {0} but was {1}", expectedFN, frame.FN);
 				_previousFN = frame.FN;

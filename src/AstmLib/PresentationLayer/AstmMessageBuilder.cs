@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using AstmLib.PresentationLayer.Exceptions;
 using AstmLib.Configuration;
 
@@ -10,14 +8,14 @@ namespace AstmLib.PresentationLayer
 	{
 		public static AstmMessage[] Build(string[] data, AstmHighLevelSettings highLevelSettings)
 		{
-			List<AstmMessage> messages = new List<AstmMessage>();
+			var messages = new List<AstmMessage>();
 			AstmMessage message = null;
 			AstmRecord lastLeveledRecord = null;
-			int state = 0;
-			for (int i = 0; i < data.Length; i++)
+			var state = 0;
+			for (var i = 0; i < data.Length; i++)
 			{
-				AstmRecord currentRecord = AstmRecord.Parse(data[i], highLevelSettings);
-				string curSN = currentRecord.Fields[1];	// if this one is header than curSN would be ignored
+				var currentRecord = AstmRecord.Parse(data[i], highLevelSettings);
+				var curSN = currentRecord.Fields[1];	// if this one is header than curSN would be ignored
 				switch (state)
 				{
 					case 0:
@@ -59,7 +57,7 @@ namespace AstmLib.PresentationLayer
 								lastLeveledRecord.AddChild(currentRecord);
 								break;
 							default:
-								throw new AstmMessageBuilderException(string.Format("Unexpected type of message. Expected: Patient, Query, Terminator, Comment, Manufacturer, but was record with recordTypeId={0}", currentRecord.RecordTypeId), messages.ToArray());
+								throw new AstmMessageBuilderException($"Unexpected type of message. Expected: Patient, Query, Terminator, Comment, Manufacturer, but was record with recordTypeId={currentRecord.RecordTypeId}", messages.ToArray());
 						}
 						break;
 					case 3:	// Last leveled record - QUERY
@@ -79,7 +77,7 @@ namespace AstmLib.PresentationLayer
 								lastLeveledRecord = currentRecord;
 								break;
 							default:
-								throw new AstmMessageBuilderException(string.Format("Unexpected type of message. Expected: Terminator, Comment, Manufacturer, but was record with recordTypeId={0}", currentRecord.RecordTypeId), messages.ToArray());
+								throw new AstmMessageBuilderException($"Unexpected type of message. Expected: Terminator, Comment, Manufacturer, but was record with recordTypeId={currentRecord.RecordTypeId}", messages.ToArray());
 						}
 						break;
 					case 4:	// Last leveled record - PATIENT
@@ -105,7 +103,7 @@ namespace AstmLib.PresentationLayer
 								state = 0;
 								break;
 							default:
-								throw new AstmMessageBuilderException(string.Format("Unexpected type of message. Expected: Terminator, Comment, Manufacturer, Patient, Order but was record with recordTypeId={0}", currentRecord.RecordTypeId), messages.ToArray());
+								throw new AstmMessageBuilderException($"Unexpected type of message. Expected: Terminator, Comment, Manufacturer, Patient, Order but was record with recordTypeId={currentRecord.RecordTypeId}", messages.ToArray());
 						}
 						break;
 					case 5:	// Last leveled record ORDER
@@ -137,7 +135,7 @@ namespace AstmLib.PresentationLayer
 								lastLeveledRecord.AddChild(currentRecord);
 								break;
 							default:
-								throw new AstmMessageBuilderException(string.Format("Unexpected type of message. Expected: Terminator, Comment, Manufacturer, Patient, Order, Result but was record with recordTypeId={0}", currentRecord.RecordTypeId), messages.ToArray());
+								throw new AstmMessageBuilderException($"Unexpected type of message. Expected: Terminator, Comment, Manufacturer, Patient, Order, Result but was record with recordTypeId={currentRecord.RecordTypeId}", messages.ToArray());
 						}
 						break;
 					case 6:	// Last leveled record = RESULT
@@ -169,7 +167,7 @@ namespace AstmLib.PresentationLayer
 								state = 4;
 								break;
 							default:
-								throw new AstmMessageBuilderException(string.Format("Unexpected type of message. Expected: Terminator, Comment, Manufacturer, Patient, Order, Result but was record with recordTypeId={0}", currentRecord.RecordTypeId), messages.ToArray());
+								throw new AstmMessageBuilderException($"Unexpected type of message. Expected: Terminator, Comment, Manufacturer, Patient, Order, Result but was record with recordTypeId={currentRecord.RecordTypeId}", messages.ToArray());
 						}
 						break;
 				}
