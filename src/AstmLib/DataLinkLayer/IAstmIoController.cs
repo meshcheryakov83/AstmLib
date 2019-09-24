@@ -4,7 +4,6 @@ namespace AstmLib.DataLinkLayer
 {
     public interface IAstmIOController
     {
-
         bool IsRunning { get; }
         void Start();
         void Stop();

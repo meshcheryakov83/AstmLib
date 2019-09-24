@@ -2,70 +2,82 @@
 
 namespace AstmLib.PresentationLayer
 {
-	public class AstmRecordEnumerator : IEnumerator<AstmRecord>, IEnumerator<string>
-	{
-		private AstmMessage _message;
-		private AstmRecord _current;
+    public class AstmRecordEnumerator : IEnumerator<AstmRecord>, IEnumerator<string>
+    {
+        private AstmMessage _message;
+        private AstmRecord _current;
 
-		#region IEnumerator<AstmRecord> Members
+        #region IEnumerator<AstmRecord> Members
 
-		public AstmRecord Current => _current;
+        public AstmRecord Current => _current;
 
         #endregion
 
-		#region IDisposable Members
+        #region IDisposable Members
 
-		public void Dispose()
-		{
-			_message = null;
-			_current = null;
-		}
+        public void Dispose()
+        {
+            _message = null;
+            _current = null;
+        }
 
-		#endregion
+        #endregion
 
-		#region IEnumerator Members
+        #region IEnumerator Members
 
-		object System.Collections.IEnumerator.Current => _current;
+        object System.Collections.IEnumerator.Current => _current;
 
         public bool MoveNext()
-		{
-			if (_current == null)
-				_current = _message.HeaderRecord;
-			else if (_current.FirstChild != null)
-				_current = _current.FirstChild;
-			else if (_current.Next != null)
-				_current = _current.Next;
-			else
-			{
-				while (_current != null && _current.Next == null)
-					_current = _current.Parent;
+        {
+            if (_current == null)
+            {
+                _current = _message.HeaderRecord;
+            }
+            else if (_current.FirstChild != null)
+            {
+                _current = _current.FirstChild;
+            }
+            else if (_current.Next != null)
+            {
+                _current = _current.Next;
+            }
+            else
+            {
+                while (_current != null && _current.Next == null)
+                {
+                    _current = _current.Parent;
+                }
 
-				if (_current == null)
-					return false;
-				else
-					_current = _current.Next;
-			}
+                if (_current == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    _current = _current.Next;
+                }
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		public void Reset()
-		{
-			_current = null;
-		}
+        public void Reset()
+        {
+            _current = null;
+        }
 
-		public AstmRecordEnumerator(AstmMessage message)
-		{
-			_message = message;
-			Reset();
-		}
-
-		#endregion
-
-		#region IEnumerator<string> Members
-
-		string IEnumerator<string>.Current => _current.ToString();
+        public AstmRecordEnumerator(AstmMessage message)
+        {
+            _message = message;
+            Reset();
+        }
 
         #endregion
-	}
+
+        #region IEnumerator<string> Members
+
+        string IEnumerator<string>.Current => _current.ToString();
+
+        #endregion
+    }
 }

@@ -1,10 +1,10 @@
+using AstmLib.Configuration;
+using AstmLib.DataLinkLayer.Exceptions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using AstmLib.Configuration;
-using AstmLib.DataLinkLayer.Exceptions;
-using Microsoft.Extensions.Logging;
 
 namespace AstmLib.DataLinkLayer
 {
@@ -15,13 +15,13 @@ namespace AstmLib.DataLinkLayer
 
         #region Fields
 
-	    private readonly ILogger<AstmIOController> _log;
-		private readonly Queue<string> _uploadQueue = new Queue<string>();
+        private readonly ILogger<AstmIOController> _log;
+        private readonly Queue<string> _uploadQueue = new Queue<string>();
         private readonly IUploader _uploader;
         private readonly IDownloader _downloader;
-		private readonly IAstmChannel _stream = null;
-	    private readonly AstmLowLevelSettings _lowLevelSettings;
-	    private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly IAstmChannel _stream = null;
+        private readonly AstmLowLevelSettings _lowLevelSettings;
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private readonly ITimersManager _timersManager;
 
         private DataLinkStates _state;
@@ -35,76 +35,76 @@ namespace AstmLib.DataLinkLayer
         public event EventHandler<IOMessageEventArgs> UnhandledErrorOccured;
 
         #region Constructors & Destructors
-        
-	    public AstmIOController(
-	        IAstmChannel stream,
-	        AstmLowLevelSettings lowLevelSettings,
-	        ILoggerFactory factory) : this(
+
+        public AstmIOController(
+            IAstmChannel stream,
+            AstmLowLevelSettings lowLevelSettings,
+            ILoggerFactory factory) : this(
                 stream,
                 lowLevelSettings,
                 new Uploader(stream, lowLevelSettings, new TimersManager(), factory.CreateLogger<Uploader>()),
                 new Downloader(stream, lowLevelSettings, new TimersManager(), factory.CreateLogger<Downloader>()),
                 new TimersManager(),
                 factory.CreateLogger<AstmIOController>())
-	    {
-	    }
+        {
+        }
 
-	    protected AstmIOController(
+        protected AstmIOController(
             IAstmChannel stream,
             AstmLowLevelSettings lowLevelSettings,
             IUploader uploader,
             IDownloader downloader,
             ITimersManager timersManager,
             ILogger<AstmIOController> log)
-	    {
-	        _stream = stream;
-		    _uploader = uploader;
-		    _downloader = downloader;
-		    _lowLevelSettings = lowLevelSettings;
+        {
+            _stream = stream;
+            _uploader = uploader;
+            _downloader = downloader;
+            _lowLevelSettings = lowLevelSettings;
             _timersManager = timersManager;
-		    _log = log;
-		    _timersManager.CreateTimer(DISABLE_UPLOAD_TIMER_NAME);
+            _log = log;
+            _timersManager.CreateTimer(DISABLE_UPLOAD_TIMER_NAME);
         }
 
-		#endregion
+        #endregion
 
-		public void Start()
-		{
+        public void Start()
+        {
             IsRunning = true;
-		    Task.Run(
+            Task.Run(
                 () => run(_cancellationTokenSource.Token),
                 _cancellationTokenSource.Token);
-		}
+        }
 
-		public void Stop()
-		{
+        public void Stop()
+        {
             _cancellationTokenSource.Cancel();
             _log.LogInformation("Stopping controller...");
-		}
+        }
 
-		public void AddMessageToUploadQueue(string message)
-		{
-		    lock (_uploadQueue)
-		    {
-		        _uploadQueue.Enqueue(message);
-		    }
-		}
+        public void AddMessageToUploadQueue(string message)
+        {
+            lock (_uploadQueue)
+            {
+                _uploadQueue.Enqueue(message);
+            }
+        }
 
         private void disableUpload(int millisecond)
-		{
-			_uploadEnabled = false;
+        {
+            _uploadEnabled = false;
             _timersManager.StartTimer(DISABLE_UPLOAD_TIMER_NAME, millisecond);
-		}
+        }
 
-	    public void ProcessCurrentState(IDownloader downloader, IUploader uploader)
-	    {
-	        if (!_timersManager.CheckTimerTimeout(DISABLE_UPLOAD_TIMER_NAME))
-	        {
-	            _uploadEnabled = true;
-	        }
+        public void ProcessCurrentState(IDownloader downloader, IUploader uploader)
+        {
+            if (!_timersManager.CheckTimerTimeout(DISABLE_UPLOAD_TIMER_NAME))
+            {
+                _uploadEnabled = true;
+            }
 
-	        if (_stream.IsInFaultState && !_stream.Reopen())
-	        {
+            if (_stream.IsInFaultState && !_stream.Reopen())
+            {
                 Thread.Sleep(_lowLevelSettings.ConnectionRetryTime);
                 return;
             }
@@ -201,7 +201,7 @@ namespace AstmLib.DataLinkLayer
         }
 
         private void raiseMessageUploadCompleted(IOMessageEventArgs args)
-		{
+        {
             Task.Run(() =>
             {
                 try
@@ -216,7 +216,7 @@ namespace AstmLib.DataLinkLayer
         }
 
         private void raiseMessageDownloadCompleted(IOMessageEventArgs args)
-		{
+        {
             Task.Run(() =>
             {
                 try
@@ -228,7 +228,7 @@ namespace AstmLib.DataLinkLayer
                     _log.LogError($"Error occured while processing downloaded message: {ex}");
                 }
             });
-		}
+        }
 
         private void raiseUnhandledErrorOccured(IOMessageEventArgs args)
         {

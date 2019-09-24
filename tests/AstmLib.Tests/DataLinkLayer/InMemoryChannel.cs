@@ -26,7 +26,10 @@ namespace AstmLib.Tests.DataLinkLayer
         public byte ReadByte()
         {
             if (_in.Count > 0)
+            {
                 return _in.Dequeue();
+            }
+
             throw new TimeoutException();
         }
 

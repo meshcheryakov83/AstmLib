@@ -1,6 +1,6 @@
 namespace AstmLib.DataLinkLayer.Exceptions
 {
-	public class BusyException : ApplicationException
-	{
-	}
+    public class BusyException : ApplicationException
+    {
+    }
 }

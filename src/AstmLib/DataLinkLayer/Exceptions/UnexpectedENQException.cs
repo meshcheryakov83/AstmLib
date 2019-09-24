@@ -1,6 +1,6 @@
 namespace AstmLib.DataLinkLayer.Exceptions
 {
-	public class UnexpectedENQException : ApplicationException
-	{
-	}
+    public class UnexpectedENQException : ApplicationException
+    {
+    }
 }

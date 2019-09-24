@@ -20,10 +20,10 @@ namespace AstmLib.Tests.DataLinkLayer
             Exception uploadException = null;
             Exception downloadException = null;
             var message = @"tests\r\n"
-                             + "esttesttesttesttesttesttestesttesttesttesttesttesttesttestesttesttesttestt"
-                             + "esttesttesttestesttesttesttesttesttesttesttestesttesttesttesttesttesttesttestesttes"
-                             + "ttesttesttesttesttesttestesttesttesttesttesttesttesttestesttesttesttestte"
-                             + "sttesttesttestesttesttesttesttesttesttesttestesttesttesttesttesttesttesttest\r\n";
+                          + "esttesttesttesttesttesttestesttesttesttesttesttesttesttestesttesttesttestt"
+                          + "esttesttesttestesttesttesttesttesttesttesttestesttesttesttesttesttesttesttestesttes"
+                          + "ttesttesttesttesttesttestesttesttesttesttesttesttesttestesttesttesttestte"
+                          + "sttesttesttestesttesttesttesttesttesttesttestesttesttesttesttesttesttesttest\r\n";
             var loggingFactory = new LoggerFactory();
             loggingFactory.AddProvider(new DebugLoggerProvider());
 

@@ -1,6 +1,6 @@
 namespace AstmLib.DataLinkLayer.Exceptions
 {
-	public class DefectiveResponseException : ApplicationException
-	{
-	}
+    public class DefectiveResponseException : ApplicationException
+    {
+    }
 }

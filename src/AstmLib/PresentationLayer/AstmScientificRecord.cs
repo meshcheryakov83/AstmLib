@@ -2,26 +2,26 @@ using AstmLib.Configuration;
 
 namespace AstmLib.PresentationLayer
 {
-	public class AstmScientificRecord : AstmRecord
-	{
-		#region Constructors
+    public class AstmScientificRecord : AstmRecord
+    {
+        #region Constructors
 
-		public AstmScientificRecord(AstmHighLevelSettings highLevelSettings) : base(highLevelSettings)
+        public AstmScientificRecord(AstmHighLevelSettings highLevelSettings) : base(highLevelSettings)
         {
-			Fields = new string[21];
-			RecordTypeId = AstmRecordTypeIds.Scientific;
-		}
+            Fields = new string[21];
+            RecordTypeId = AstmRecordTypeIds.Scientific;
+        }
 
-		#endregion
+        #endregion
 
-		#region Fields Definition
+        #region Fields Definition
 
-		public string SequenceNumber
-		{
-			get => Fields[1];
+        public string SequenceNumber
+        {
+            get => Fields[1];
             set => Fields[1] = value;
         }
 
-		#endregion
-	}
+        #endregion
+    }
 }
