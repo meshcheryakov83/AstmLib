@@ -15,11 +15,11 @@ namespace AstmLib.DataLinkLayer
         bool Completed { get; }
 
         /// <summary>
-        /// Читает максимум один фрейм и возвращает управление. При этом сохраняет свое состояние и ждет повторного вызова
-        /// чтобы выкачать все сообщение.
+        /// Read only one frame and return control. Also keep the state and wait for the
+        /// next call to download the rest of message.
         /// </summary>
-        /// <exception cref="ASTMIOException">Любая ошибка упаковывается в этот класс как InnerException</exception>
-        /// <exception cref="TimeoutException">Тихо в лесу</exception>
+        /// <exception cref="ASTMIOException"></exception>
+        /// <exception cref="TimeoutException"></exception>
         void ExecuteDownloadStep();
     }
 
@@ -31,7 +31,6 @@ namespace AstmLib.DataLinkLayer
         {
             WaitEstablishmentPhase,
             ReceiveFrame,
-            ProcessReceivedFrame,
             Completed
         }
 
@@ -41,7 +40,6 @@ namespace AstmLib.DataLinkLayer
         private readonly IAstmChannel _stream = null;
         private States _state;
         private int _previousFN = 0;
-        private List<string> _records = new List<string>();
         private string _currentRecord = "";
         private readonly List<byte> _buf = new List<byte>();
 
@@ -65,7 +63,6 @@ namespace AstmLib.DataLinkLayer
             _completed = false;
             _state = States.WaitEstablishmentPhase;
             _previousFN = 0;
-            _records = new List<string>();
             _currentRecord = "";
         }
 
@@ -74,11 +71,11 @@ namespace AstmLib.DataLinkLayer
         public bool Completed => _completed;
 
         /// <summary>
-        /// Читает максимум один фрейм и возвращает управление. При этом сохраняет свое состояние и ждет повторного вызова
-        /// чтобы выкачать все сообщение.
+        /// Read only one frame and return control. Also keep the state and wait for the
+        /// next call to download the rest of message.
         /// </summary>
-        /// <exception cref="ASTMIOException">Любая ошибка упаковывается в этот класс как InnerException</exception>
-        /// <exception cref="TimeoutException">Тихо в лесу</exception>
+        /// <exception cref="ASTMIOException"></exception>
+        /// <exception cref="TimeoutException"></exception>
         public void ExecuteDownloadStep()
         {
             if (Completed)
@@ -113,7 +110,7 @@ namespace AstmLib.DataLinkLayer
                     try
                     {
                         _stream.ReadTimeout = 100;
-                        b = (byte) _stream.ReadByte();
+                        b = _stream.ReadByte();
                         if (b == (byte) DataLinkControlCodes.EOT)
                         {
                             _timersManager.StopTimer(WAIT_FRAME_TIMER_NAME);

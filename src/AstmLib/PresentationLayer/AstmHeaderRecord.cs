@@ -47,12 +47,6 @@ namespace AstmLib.PresentationLayer
             set => Fields[5] = value;
         }
 
-        //public string ReservedField
-        //{
-        //    get { return _fields[6]; }
-        //    set { _fields[6] = value; }
-        //}
-
         public string SenderTelephoneNumber
         {
             get => Fields[7];

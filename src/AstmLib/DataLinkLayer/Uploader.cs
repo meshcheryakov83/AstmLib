@@ -14,11 +14,10 @@ namespace AstmLib.DataLinkLayer
         void ResetAndUpload(string message);
 
         /// <summary>
-        /// Закачивает максимум один фрейм и возвращает управление. При этом сохраняет свое состояние и ждет повторного вызова,
-        /// для того что бы закончить upload.
+        /// Upload one frame and returns control. Keeps its state and waits for the next call to complete upload.
         /// </summary>
-        /// <exception cref="UploadException">Выгрузка прервана из-за ошибок</exception>
-        /// <exception cref="InvalidOperationException">Выгрузка уже закончена</exception>
+        /// <exception cref="UploadException">Any exception during upload</exception>
+        /// <exception cref="InvalidOperationException">Upload already done</exception>
         void ExecuteUploadStep();
     }
 
@@ -91,11 +90,10 @@ namespace AstmLib.DataLinkLayer
         }
 
         /// <summary>
-        /// Закачивает максимум один фрейм и возвращает управление. При этом сохраняет свое состояние и ждет повторного вызова,
-        /// для того что бы закончить upload.
+        /// Upload one frame and returns control. Keeps its state and waits for the next call to complete upload.
         /// </summary>
-        /// <exception cref="UploadException">Выгрузка прервана из-за ошибок</exception>
-        /// <exception cref="InvalidOperationException">Выгрузка уже закончена</exception>
+        /// <exception cref="UploadException">Any exception during upload</exception>
+        /// <exception cref="InvalidOperationException">Upload already done</exception>
         public void ExecuteUploadStep()
         {
             byte[] buf = null;

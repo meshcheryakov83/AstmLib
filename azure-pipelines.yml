@@ -2,18 +2,19 @@ variables:
   buildConfiguration: 'Release'
 
 stages:
-- stage: Build
-  jobs:
-  - job: BuildJob
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - script: dotnet build --configuration $(buildConfiguration)
-      displayName: 'dotnet build $(buildConfiguration)'
-- stage: Test
-  jobs:  
-  - job: TestJob
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - script: find ./tests -type f -name '*.csproj' | xargs -Iz dotnet test z
+  - stage: Build
+    jobs:
+    - job: BuildJob
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - script: dotnet build --configuration $(buildConfiguration)
+        displayName: 'dotnet build $(buildConfiguration)'
+
+  - stage: Test
+    jobs:  
+    - job: TestJob
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - script: find ./tests -type f -name '*.csproj' | xargs -Iz dotnet test z
