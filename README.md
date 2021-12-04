@@ -5,3 +5,5 @@
 .Net Standard 2.0 implementation of ASTM protocol specification between host and medical device equipment
 
 http://www.astm.org/cgi-bin/resolver.cgi?E1394
+
+[![BCH compliance](https://bettercodehub.com/edge/badge/meshcheryakov83/AstmLib?branch=master)](https://bettercodehub.com/)
